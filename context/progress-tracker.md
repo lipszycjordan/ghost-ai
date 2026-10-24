@@ -4,7 +4,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Feature 02: Editor Chrome
+- Feature 03: Auth
 
 ## Current Goal
 
@@ -14,6 +14,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 - 01-design-system: shadcn/ui installed and configured (Tailwind v4, Next.js 16); Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea added to components/ui/; lucide-react installed; lib/utils.ts with cn() helper created; globals.css updated with full dark-only theme variables and Tailwind token mappings.
 - 02-editor-chrome: EditorNavbar (fixed top bar, sidebar toggle with PanelLeftOpen/PanelLeftClose icons, dark background, bottom border) and ProjectSidebar (floating overlay, slides in from left, Projects title + close button, My Projects/Shared tabs with empty states, New Project button) created in components/editor/. Dialog pattern ready via existing shadcn Dialog component and color tokens in globals.css.
+- 03-auth: Clerk wired into Next.js 16. proxy.ts at root with clerkMiddleware and matcher. ClerkProvider in root layout with dark theme from @clerk/ui/themes and CSS variable overrides. Sign-in (/sign-in/[[...sign-in]]) and sign-up (/sign-up/[[...sign-up]]) pages with two-panel layout (left: logo + tagline + feature list, right: Clerk form; mobile: form only). / redirects authenticated users to /editor, unauthenticated to /sign-in. app/editor/page.tsx protected with auth.protect(). EditorNavbar right section has UserButton. @clerk/ui installed.
 
 ## In Progress
 
