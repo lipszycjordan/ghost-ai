@@ -4,19 +4,20 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Feature 01: Design System
+- Feature 02: Editor Chrome
 
 ## Current Goal
 
-- Install and configure shadcn/ui with dark theme, add UI primitive components, and create lib/utils.ts with cn() helper.
+- Build the top navbar and left sidebar shell that frame every editor screen.
 
 ## Completed
 
 - 01-design-system: shadcn/ui installed and configured (Tailwind v4, Next.js 16); Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea added to components/ui/; lucide-react installed; lib/utils.ts with cn() helper created; globals.css updated with full dark-only theme variables and Tailwind token mappings.
+- 02-editor-chrome: EditorNavbar (fixed top bar, sidebar toggle with PanelLeftOpen/PanelLeftClose icons, dark background, bottom border) and ProjectSidebar (floating overlay, slides in from left, Projects title + close button, My Projects/Shared tabs with empty states, New Project button) created in components/editor/. Dialog pattern ready via existing shadcn Dialog component and color tokens in globals.css.
 
 ## In Progress
 
-- None yet.
+- None.
 
 ## Next Up
 
