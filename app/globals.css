@@ -68,6 +68,8 @@
 }
 
 :root {
+    color-scheme: dark;
+
     /* Dark-only theme — all values set to dark palette */
     --bg-base: #080809;
     --bg-surface: #111114;
