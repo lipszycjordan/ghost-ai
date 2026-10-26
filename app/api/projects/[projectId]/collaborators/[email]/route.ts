@@ -11,7 +11,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { projectId, email: rawEmail } = await params;
-  const email = decodeURIComponent(rawEmail);
+  const email = rawEmail;
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },

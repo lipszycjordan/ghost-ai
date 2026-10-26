@@ -6,15 +6,19 @@ interface CurrentIdentity {
   primaryEmail: string | undefined;
 }
 
+export function normalizeEmailAddress(email: string | undefined): string | undefined {
+  const normalized = email?.trim().toLowerCase();
+  return normalized || undefined;
+}
+
 export async function getCurrentIdentity(): Promise<CurrentIdentity | null> {
   const { userId, sessionClaims } = await auth();
   if (!userId) return null;
 
   const claimsEmail = (sessionClaims as Record<string, unknown> | null)?.email;
-  const primaryEmail: string | undefined =
-    typeof claimsEmail === "string" && claimsEmail.length > 0
-      ? claimsEmail
-      : (await currentUser())?.primaryEmailAddress?.emailAddress;
+  const primaryEmail =
+    normalizeEmailAddress(typeof claimsEmail === "string" ? claimsEmail : undefined) ??
+    normalizeEmailAddress((await currentUser())?.primaryEmailAddress?.emailAddress);
 
   return { userId, primaryEmail };
 }

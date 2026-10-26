@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Copy, Check, UserMinus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,21 +33,29 @@ export function ShareDialog({ open, projectId, isOwner, onClose }: ShareDialogPr
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [removingEmails, setRemovingEmails] = useState<Set<string>>(new Set());
 
-  const fetchCollaborators = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/projects/${projectId}/collaborators`);
-      if (res.ok) {
-        const data: Collaborator[] = await res.json();
-        setCollaborators(data);
-      }
-    } catch {
-      // Silently fail
-    }
-  }, [projectId]);
-
   useEffect(() => {
-    if (open) fetchCollaborators();
-  }, [open, fetchCollaborators]);
+    if (!open) return;
+
+    let isCurrent = true;
+
+    const fetchCollaborators = async () => {
+      try {
+        const res = await fetch(`/api/projects/${projectId}/collaborators`);
+        if (res.ok) {
+          const data: Collaborator[] = await res.json();
+          if (isCurrent) setCollaborators(data);
+        }
+      } catch {
+        // Silently fail
+      }
+    };
+
+    void fetchCollaborators();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [open, projectId]);
 
   const handleCopyLink = async () => {
     const url = `${window.location.origin}/editor/${projectId}`;
@@ -204,7 +212,7 @@ export function ShareDialog({ open, projectId, isOwner, onClose }: ShareDialogPr
                     ) : (
                       <div className="h-7 w-7 rounded-full bg-elevated border border-border-default flex items-center justify-center shrink-0">
                         <span className="text-xs text-copy-muted font-medium">
-                          {(collab.name ?? collab.email)[0].toUpperCase()}
+                          {(collab.name ?? collab.email).charAt(0).toUpperCase() || "?"}
                         </span>
                       </div>
                     )}
