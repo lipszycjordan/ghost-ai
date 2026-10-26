@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { X, Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +11,7 @@ interface ProjectSidebarProps {
   isOpen: boolean;
   ownedProjects: ProjectSummary[];
   sharedProjects: ProjectSummary[];
+  activeProjectId?: string;
   onClose: () => void;
   onNewProject: () => void;
   onRenameProject: (project: ProjectSummary) => void;
@@ -20,6 +22,7 @@ export function ProjectSidebar({
   isOpen,
   ownedProjects,
   sharedProjects,
+  activeProjectId,
   onClose,
   onNewProject,
   onRenameProject,
@@ -72,6 +75,7 @@ export function ProjectSidebar({
                     <li key={project.id}>
                       <ProjectItem
                         project={project}
+                        isActive={project.id === activeProjectId}
                         showActions
                         onRename={() => onRenameProject(project)}
                         onDelete={() => onDeleteProject(project)}
@@ -91,7 +95,11 @@ export function ProjectSidebar({
                 <ul className="flex flex-col gap-0.5">
                   {sharedProjects.map((project) => (
                     <li key={project.id}>
-                      <ProjectItem project={project} showActions={false} />
+                      <ProjectItem
+                        project={project}
+                        isActive={project.id === activeProjectId}
+                        showActions={false}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -113,15 +121,21 @@ export function ProjectSidebar({
 
 interface ProjectItemProps {
   project: ProjectSummary;
+  isActive: boolean;
   showActions: boolean;
   onRename?: () => void;
   onDelete?: () => void;
 }
 
-function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemProps) {
+function ProjectItem({ project, isActive, showActions, onRename, onDelete }: ProjectItemProps) {
   return (
-    <div className="group flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-elevated transition-colors">
-      <span className="flex-1 text-sm text-copy-primary truncate">{project.name}</span>
+    <Link
+      href={`/editor/${project.id}`}
+      className={`group flex items-center gap-2 rounded-xl px-2 py-2 transition-colors ${
+        isActive ? "bg-accent-dim text-brand" : "hover:bg-elevated text-copy-primary"
+      }`}
+    >
+      <span className="flex-1 text-sm truncate">{project.name}</span>
 
       {showActions && (
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -130,7 +144,7 @@ function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemPr
             size="icon"
             className="h-6 w-6 text-copy-muted hover:text-copy-primary"
             onClick={(e) => {
-              e.stopPropagation();
+              e.preventDefault();
               onRename?.();
             }}
             aria-label={`Rename ${project.name}`}
@@ -142,7 +156,7 @@ function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemPr
             size="icon"
             className="h-6 w-6 text-copy-muted hover:text-state-error"
             onClick={(e) => {
-              e.stopPropagation();
+              e.preventDefault();
               onDelete?.();
             }}
             aria-label={`Delete ${project.name}`}
@@ -151,6 +165,6 @@ function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemPr
           </Button>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
