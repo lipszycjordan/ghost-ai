@@ -7,16 +7,22 @@ import { EditorHome } from "./editor-home";
 import { CreateProjectDialog } from "./dialogs/create-project-dialog";
 import { RenameProjectDialog } from "./dialogs/rename-project-dialog";
 import { DeleteProjectDialog } from "./dialogs/delete-project-dialog";
-import { useProjectDialogs } from "@/hooks/use-project-dialogs";
+import { useProjectActions } from "@/hooks/use-project-actions";
+import type { ProjectSummary } from "@/lib/projects";
 
-export function EditorClientShell() {
+interface EditorClientShellProps {
+  ownedProjects: ProjectSummary[];
+  sharedProjects: ProjectSummary[];
+}
+
+export function EditorClientShell({ ownedProjects, sharedProjects }: EditorClientShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const {
-    projects,
     dialog,
     selectedProject,
     name,
+    createSuffix,
     slugError,
     setName,
     isLoading,
@@ -27,7 +33,7 @@ export function EditorClientShell() {
     handleCreate,
     handleRename,
     handleDelete,
-  } = useProjectDialogs();
+  } = useProjectActions();
 
   return (
     <div className="flex h-screen bg-base">
@@ -38,7 +44,8 @@ export function EditorClientShell() {
 
       <ProjectSidebar
         isOpen={isSidebarOpen}
-        projects={projects}
+        ownedProjects={ownedProjects}
+        sharedProjects={sharedProjects}
         onClose={() => setIsSidebarOpen(false)}
         onNewProject={openCreate}
         onRenameProject={openRename}
@@ -52,6 +59,7 @@ export function EditorClientShell() {
       <CreateProjectDialog
         open={dialog === "create"}
         name={name}
+        suffix={createSuffix}
         slugError={slugError}
         isLoading={isLoading}
         onNameChange={setName}

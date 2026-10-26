@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { Project } from "@/lib/mock-projects";
+import type { ProjectSummary } from "@/lib/projects";
 
 interface RenameProjectDialogProps {
   open: boolean;
-  project: Project | null;
+  project: ProjectSummary | null;
   name: string;
   slugError: string;
   isLoading: boolean;

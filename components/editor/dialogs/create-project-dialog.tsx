@@ -15,6 +15,7 @@ import { toSlug } from "@/lib/slug";
 interface CreateProjectDialogProps {
   open: boolean;
   name: string;
+  suffix: string;
   slugError: string;
   isLoading: boolean;
   onNameChange: (value: string) => void;
@@ -25,6 +26,7 @@ interface CreateProjectDialogProps {
 export function CreateProjectDialog({
   open,
   name,
+  suffix,
   slugError,
   isLoading,
   onNameChange,
@@ -32,6 +34,7 @@ export function CreateProjectDialog({
   onClose,
 }: CreateProjectDialogProps) {
   const slug = toSlug(name);
+  const roomId = slug ? `${slug}-${suffix}` : "";
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -54,7 +57,7 @@ export function CreateProjectDialog({
           />
           {name && (
             <p className="text-xs text-copy-muted font-mono px-1">
-              ghost.ai/<span className="text-copy-secondary">{slug || "…"}</span>
+              ghost.ai/<span className="text-copy-secondary">{roomId || "…"}</span>
             </p>
           )}
           {slugError && (
