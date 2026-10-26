@@ -13,10 +13,12 @@ function createClient() {
   if (url.startsWith("prisma+postgres://")) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { withAccelerate } = require("@prisma/extension-accelerate");
-    return new PrismaClient().$extends(withAccelerate());
+    return new PrismaClient({ accelerateUrl: url }).$extends(withAccelerate());
   }
 
-  const adapter = new PrismaPg({ connectionString: url });
+  // pg v9 will break 'require'/'prefer'/'verify-ca' — normalize to 'verify-full' now
+  const normalizedUrl = url.replace(/sslmode=(prefer|require|verify-ca)/, "sslmode=verify-full");
+  const adapter = new PrismaPg({ connectionString: normalizedUrl });
   return new PrismaClient({ adapter });
 }
 

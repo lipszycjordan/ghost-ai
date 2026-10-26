@@ -9,11 +9,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import type { Project } from "@/lib/mock-projects";
+import type { ProjectSummary } from "@/lib/projects";
 
 interface DeleteProjectDialogProps {
   open: boolean;
-  project: Project | null;
+  project: ProjectSummary | null;
+  error: string;
   isLoading: boolean;
   onConfirm: () => void;
   onClose: () => void;
@@ -22,6 +23,7 @@ interface DeleteProjectDialogProps {
 export function DeleteProjectDialog({
   open,
   project,
+  error,
   isLoading,
   onConfirm,
   onClose,
@@ -38,6 +40,12 @@ export function DeleteProjectDialog({
             </DialogDescription>
           )}
         </DialogHeader>
+
+        {error && (
+          <p className="text-xs text-state-error" role="alert">
+            {error}
+          </p>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={onClose} disabled={isLoading}>

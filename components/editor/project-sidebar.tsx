@@ -4,28 +4,27 @@ import { X, Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { Project } from "@/lib/mock-projects";
+import type { ProjectSummary } from "@/lib/projects";
 
 interface ProjectSidebarProps {
   isOpen: boolean;
-  projects: Project[];
+  ownedProjects: ProjectSummary[];
+  sharedProjects: ProjectSummary[];
   onClose: () => void;
   onNewProject: () => void;
-  onRenameProject: (project: Project) => void;
-  onDeleteProject: (project: Project) => void;
+  onRenameProject: (project: ProjectSummary) => void;
+  onDeleteProject: (project: ProjectSummary) => void;
 }
 
 export function ProjectSidebar({
   isOpen,
-  projects,
+  ownedProjects,
+  sharedProjects,
   onClose,
   onNewProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
-  const ownedProjects = projects.filter((p) => p.isOwned);
-  const sharedProjects = projects.filter((p) => !p.isOwned);
-
   return (
     <>
       {isOpen && (
@@ -113,7 +112,7 @@ export function ProjectSidebar({
 }
 
 interface ProjectItemProps {
-  project: Project;
+  project: ProjectSummary;
   showActions: boolean;
   onRename?: () => void;
   onDelete?: () => void;
