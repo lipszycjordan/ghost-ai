@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { normalizeEmailAddress } from "@/lib/project-access";
 
 export interface ProjectSummary {
   id: string;
@@ -16,10 +17,9 @@ export async function getProjectsForUser(): Promise<{
   // Prefer email from the JWT (no HTTP call) — requires Clerk JWT template to include
   // {{ user.primary_email_address }} as "email". Falls back to currentUser() otherwise.
   const claimsEmail = (sessionClaims as Record<string, unknown> | null)?.email;
-  const primaryEmail: string | undefined =
-    typeof claimsEmail === "string" && claimsEmail.length > 0
-      ? claimsEmail
-      : (await currentUser())?.primaryEmailAddress?.emailAddress;
+  const primaryEmail =
+    normalizeEmailAddress(typeof claimsEmail === "string" ? claimsEmail : undefined) ??
+    normalizeEmailAddress((await currentUser())?.primaryEmailAddress?.emailAddress);
 
   const ownedPromise = prisma.project.findMany({
     where: { ownerId: userId },
