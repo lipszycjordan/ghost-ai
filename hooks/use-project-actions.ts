@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toSlug } from "@/lib/slug";
 import type { ProjectSummary } from "@/lib/projects";
@@ -13,12 +13,14 @@ function generateSuffix(): string {
 
 export function useProjectActions(activeProjectId?: string) {
   const router = useRouter();
+  const pending = useRef(false);
   const [dialog, setDialog] = useState<DialogType>(null);
   const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(null);
   const [name, setNameState] = useState("");
   const [createSuffix, setCreateSuffix] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [slugError, setSlugError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   const openCreate = () => {
     setNameState("");
@@ -37,6 +39,7 @@ export function useProjectActions(activeProjectId?: string) {
 
   const openDelete = (project: ProjectSummary) => {
     setSelectedProject(project);
+    setDeleteError("");
     setDialog("delete");
   };
 
@@ -45,6 +48,7 @@ export function useProjectActions(activeProjectId?: string) {
     setSelectedProject(null);
     setNameState("");
     setSlugError("");
+    setDeleteError("");
   };
 
   const setName = (value: string) => {
@@ -53,6 +57,7 @@ export function useProjectActions(activeProjectId?: string) {
   };
 
   const handleCreate = async () => {
+    if (pending.current) return;
     if (!name.trim()) return;
     const slug = toSlug(name.trim());
     if (!slug) {
@@ -62,6 +67,7 @@ export function useProjectActions(activeProjectId?: string) {
 
     const id = `${slug}-${createSuffix}`;
 
+    pending.current = true;
     setIsLoading(true);
     try {
       const res = await fetch("/api/projects", {
@@ -78,10 +84,13 @@ export function useProjectActions(activeProjectId?: string) {
     } catch {
       setSlugError("Failed to create project. Please try again.");
       setIsLoading(false);
+    } finally {
+      pending.current = false;
     }
   };
 
   const handleRename = async () => {
+    if (pending.current) return;
     if (!selectedProject || !name.trim()) return;
     const slug = toSlug(name.trim());
     if (!slug) {
@@ -89,6 +98,7 @@ export function useProjectActions(activeProjectId?: string) {
       return;
     }
 
+    pending.current = true;
     setIsLoading(true);
     try {
       const res = await fetch(`/api/projects/${selectedProject.id}`, {
@@ -104,13 +114,16 @@ export function useProjectActions(activeProjectId?: string) {
     } catch {
       setSlugError("Failed to rename project. Please try again.");
     } finally {
+      pending.current = false;
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
+    if (pending.current) return;
     if (!selectedProject) return;
 
+    pending.current = true;
     setIsLoading(true);
     try {
       const res = await fetch(`/api/projects/${selectedProject.id}`, {
@@ -126,8 +139,10 @@ export function useProjectActions(activeProjectId?: string) {
         router.refresh();
       }
     } catch {
+      setDeleteError("Failed to delete project. Please try again.");
+    } finally {
+      pending.current = false;
       setIsLoading(false);
-      close();
     }
   };
 
@@ -137,6 +152,7 @@ export function useProjectActions(activeProjectId?: string) {
     name,
     createSuffix,
     slugError,
+    deleteError,
     setName,
     isLoading,
     openCreate,

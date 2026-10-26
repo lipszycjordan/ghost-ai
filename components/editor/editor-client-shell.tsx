@@ -24,6 +24,7 @@ export function EditorClientShell({ ownedProjects, sharedProjects }: EditorClien
     name,
     createSuffix,
     slugError,
+    deleteError,
     setName,
     isLoading,
     openCreate,
@@ -81,6 +82,7 @@ export function EditorClientShell({ ownedProjects, sharedProjects }: EditorClien
       <DeleteProjectDialog
         open={dialog === "delete"}
         project={selectedProject}
+        error={deleteError}
         isLoading={isLoading}
         onConfirm={handleDelete}
         onClose={close}

@@ -22,7 +22,10 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json().catch(() => ({}));
+  const raw: unknown = await req.json().catch(() => ({}));
+  const body = raw !== null && typeof raw === "object" && !Array.isArray(raw)
+    ? (raw as Record<string, unknown>)
+    : {};
   const name: string | undefined =
     typeof body.name === "string" && body.name.trim().length > 0
       ? body.name.trim()
